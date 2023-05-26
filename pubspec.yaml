@@ -1,10 +1,10 @@
 name: offline_image
-description: A new Flutter package project.
+description: Offline Image is a package using which we can store the Images in device local storage and use it for later purpose.
 version: 0.0.1
-homepage:
+homepage: https://github.com/Gokulnath7598/offline_image
 
 environment:
-  sdk: '>=2.18.6 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
