@@ -1,0 +1,4 @@
+enum PreferredDirectoryLocation {
+  newFolder,
+  androidDataFolder,
+}

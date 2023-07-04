@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:example/permission_handler.dart';
+import 'package:offline_image/preferred_directory.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:offline_image/offline_image.dart';
-
-import 'internal_storage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Offline Demo Home Page'),
     );
   }
@@ -35,7 +35,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<File?> files = [];
+  List<Image?> images = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getOfflineFiles();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +54,18 @@ class _MyHomePageState extends State<MyHomePage> {
           ElevatedButton(onPressed: (){
             _showModelSheet(context: context);
           },
-              child: const Text('Upload')),
+              child: const Text('Take a Picture')),
           ElevatedButton(onPressed: (){
             getOfflineFiles();
           },
-              child: const Text('Refresh')),
+              child: const Text('Auto Sync')),
+          const SizedBox(height: 10),
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: files.length,
+            itemCount: images.length,
             itemBuilder: (context, index) {
-              return Image.file(files[index]!);
+              return _imageContainer(image: images[index]!);
             },
           ),
         ],
@@ -68,10 +75,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   getOfflineFiles() async {
     try {
-      files = await getFiles(
+      images = await OfflineImage.getImages(
           preferredLocation: PreferredDirectoryLocation.newFolder,
-          applicationName: 'Example', directoryName: 'Test');
-      print(files);
+          applicationName: 'Example', directoryName: 'Test', context: context);
+      //print(images);
       // files = files.toList();
       setState(() {});
     } catch (e) {
@@ -94,9 +101,9 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             imageFile: (dynamic value) async {
               if (value != null && mounted) {
-                setState(() {
-                  storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', fileName: 'test2.jpg' );
-                });
+                await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
+                getOfflineFiles();
+                setState(() {});
               }
             },
           ),
@@ -106,26 +113,45 @@ class _MyHomePageState extends State<MyHomePage> {
             attachmentBase64: (dynamic value) {},
             imageFile: (dynamic value) async {
               if (value != null && mounted) {
-                setState(() {
-                  storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', fileName: 'test2.jpg' );
-                });
-              }
-            },
-          ),
-          CheckPermissionForPhoto(
-            name: 'Files',
-            icon: Icons.file_copy_outlined,
-            attachmentBase64: (dynamic value) {},
-            imageFile: (dynamic value) async {
-              if (value != null && mounted) {
-                setState(() {
-                });
+                await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
+                getOfflineFiles();
+                setState(() {});
               }
             },
           ),
         ],
       ),
       heightFactor: 0.2,
+    );
+  }
+
+  Widget _imageContainer({required Image image}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+      child: Row(
+        children: [
+          const SizedBox(width: 10),
+          Expanded(child: SizedBox(
+              child: image
+          )),
+          const SizedBox(width: 10),
+          InkWell(
+            child: const Icon(Icons.upload, color: Colors.blue),
+            onTap: (){}
+          ),
+          const SizedBox(width: 10),
+          InkWell(
+            child: const Icon(Icons.delete, color: Colors.red),
+            onTap: () {
+              String path = (image.image.toString()).split('"')[1];
+              OfflineImage.deleteImage(applicationName: 'Example', directoryName: path.split('/')[(path.split('/').length -2)], preferredLocation: PreferredDirectoryLocation.newFolder, context: context, imageName: path.split('/').last);
+              getOfflineFiles();
+              setState(() {});
+            }
+          ),
+          const SizedBox(width: 10),
+        ],
+      ),
     );
   }
 }
