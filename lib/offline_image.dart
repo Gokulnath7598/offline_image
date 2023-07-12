@@ -36,7 +36,7 @@ class OfflineImage {
                     '/storage/emulated/0/$applicationName',
                     directoryName));
                 dr = await dir.create(recursive: true);
-                XFile(image.path).saveTo(path.join(dr.path, imageName));
+                await XFile(image.path).saveTo(path.join(dr.path, imageName));
                 break;
               }else{
                 var permission = await Permission.manageExternalStorage.request();
@@ -45,7 +45,7 @@ class OfflineImage {
                       '/storage/emulated/0/$applicationName',
                       directoryName));
                   dr = await dir.create(recursive: true);
-                  XFile(image.path).saveTo(path.join(dr.path, imageName));
+                  await XFile(image.path).saveTo(path.join(dr.path, imageName));
                   break;
                 } else {
                   showDialog(
@@ -76,7 +76,7 @@ class OfflineImage {
                     '/storage/emulated/0/$applicationName',
                     directoryName));
                 dr = await dir.create(recursive: true);
-                XFile(image.path).saveTo(path.join(dr.path, imageName));
+                await XFile(image.path).saveTo(path.join(dr.path, imageName));
                 break;
               }else{
                 var permission = await Permission.storage.request();
@@ -85,7 +85,7 @@ class OfflineImage {
                       '/storage/emulated/0/$applicationName',
                       directoryName));
                   dr = await dir.create(recursive: true);
-                  XFile(image.path).saveTo(path.join(dr.path, imageName));
+                  await XFile(image.path).saveTo(path.join(dr.path, imageName));
                   break;
                 } else {
                   showDialog(
@@ -120,14 +120,14 @@ class OfflineImage {
             Directory? dir = await getApplicationDocumentsDirectory();
             Directory dir2 = Directory(path.join(dir.path, directoryName));
             dr = await dir2.create(recursive: true);
-            XFile(image.path).saveTo(path.join(dr.path, imageName));
+            await XFile(image.path).saveTo(path.join(dr.path, imageName));
             break;
         }
       }else{
         Directory? dir = await getApplicationDocumentsDirectory();
         Directory dir2 = Directory(path.join(dir.path, directoryName));
         dr = await dir2.create(recursive: true);
-        XFile(image.path).saveTo(path.join(dr.path, imageName));
+        await XFile(image.path).saveTo(path.join(dr.path, imageName));
       }
     } catch (e) {
       debugPrint('==== FILE STORAGE EXCEPTION ===> $e');
@@ -495,10 +495,10 @@ class OfflineImage {
     }
     try{
       File file = File(filePath);
-      file.delete();
+      await file.delete();
     }catch (e){
       debugPrint('==== FILE STORAGE EXCEPTION ===> $e');
     }
-    return null;
+    return;
   }
 }
