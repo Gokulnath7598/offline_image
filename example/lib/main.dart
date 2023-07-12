@@ -51,14 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: [
-          ElevatedButton(onPressed: (){
-            _showModelSheet(context: context);
-          },
-              child: const Text('Take a Picture')),
-          ElevatedButton(onPressed: (){
-            getOfflineFiles();
-          },
-              child: const Text('Auto Sync')),
           const SizedBox(height: 10),
           ListView.builder(
             shrinkWrap: true,
@@ -69,7 +61,13 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.camera),
+        onPressed: (){
+          _showModelSheet(context: context);
+        },
+      ),
     );
   }
 
@@ -78,8 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
       images = await OfflineImage.getImages(
           preferredLocation: PreferredDirectoryLocation.newFolder,
           applicationName: 'Example', directoryName: 'Test', context: context);
-      //print(images);
-      // files = files.toList();
       setState(() {});
     } catch (e) {
       debugPrint('error : $e');
@@ -87,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showModelSheet(
-      {required BuildContext context}) {
+      {required BuildContext context, Image? image}) {
     Utils.showModelSheet(
       context,
       Row(
@@ -101,9 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             imageFile: (dynamic value) async {
               if (value != null && mounted) {
-                await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
-                getOfflineFiles();
-                setState(() {});
+                if(image != null){
+                  String path = (image.image.toString()).split('"')[1];
+                  await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: path.split('/').last);
+                }else{
+                  await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
+                }
+                await getOfflineFiles();
               }
             },
           ),
@@ -113,9 +113,13 @@ class _MyHomePageState extends State<MyHomePage> {
             attachmentBase64: (dynamic value) {},
             imageFile: (dynamic value) async {
               if (value != null && mounted) {
-                await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
-                getOfflineFiles();
-                setState(() {});
+                if(image != null){
+                  String path = (image.image.toString()).split('"')[1];
+                  await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: path.split('/')[(path.split('/').length -2)], imageName: path.split('/').last);
+                }else{
+                  await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
+                }
+                await getOfflineFiles();
               }
             },
           ),
@@ -132,26 +136,36 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           const SizedBox(width: 10),
           Expanded(child: SizedBox(
-              child: image
+              child: getMemoryImage(image) ?? const SizedBox(height: 0, width: 0)
           )),
           const SizedBox(width: 10),
           InkWell(
-            child: const Icon(Icons.upload, color: Colors.blue),
-            onTap: (){}
+            child: const Icon(Icons.refresh, color: Colors.blue),
+            onTap: (){
+              _showModelSheet(context: context, image: image);
+            }
           ),
           const SizedBox(width: 10),
           InkWell(
             child: const Icon(Icons.delete, color: Colors.red),
-            onTap: () {
+            onTap: () async {
               String path = (image.image.toString()).split('"')[1];
-              OfflineImage.deleteImage(applicationName: 'Example', directoryName: path.split('/')[(path.split('/').length -2)], preferredLocation: PreferredDirectoryLocation.newFolder, context: context, imageName: path.split('/').last);
+              await OfflineImage.deleteImage(applicationName: 'Example', directoryName: path.split('/')[(path.split('/').length -2)], preferredLocation: PreferredDirectoryLocation.newFolder, context: context, imageName: path.split('/').last);
               getOfflineFiles();
-              setState(() {});
             }
           ),
           const SizedBox(width: 10),
         ],
       ),
     );
+  }
+
+  getMemoryImage(Image image) {
+    try{
+      String path = (image.image.toString()).split('"')[1];
+      return Image.memory(File(path).readAsBytesSync());
+    }catch(e){
+      return null;
+    }
   }
 }
