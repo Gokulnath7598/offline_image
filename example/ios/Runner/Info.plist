@@ -2,20 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Access to your Media for collecting supporting documents (pdf or any other format) will be towards regulatory requirements, your availing of various financial and non financial offerings, for App functionality, Fraud prevention, security and compliance, Account management and Analytics.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Your profile picture or any supporting document will be collected for App functionality, Fraud prevention, security and compliance, personalisation and for obtaining various financial and non-financial offerings.</string>
+	<string>Access to your Camera is for obtaining access to photos for App functionality</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Access to your Gallery is for obtaining access to photos to avail financial and non financial products and for App functionality, Fraud prevention, security and compliance, Account management and Analytics.</string>
+	<string>Access to your Gallery is for obtaining access to photos for App functionality</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Access to your Gallery is for obtaining access to photos to avail financial and non financial products and for App functionality, Fraud prevention, security and compliance, Account management and Analytics.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Access to read Contacts to get in touch with your Buddies</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>To ensure security using available mobile security authentications</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Access to get your location to proceed with this Process</string>
+	<string>Access to your Gallery is for obtaining access to photos for App functionality</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

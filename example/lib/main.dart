@@ -89,24 +89,24 @@ class _MyHomePageState extends State<MyHomePage> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          CheckPermissionForPhoto(
-            name: 'Gallery',
-            icon: Icons.receipt_rounded,
-            attachmentBase64: (dynamic value) {
-              if (value != null && mounted) {}
-            },
-            imageFile: (dynamic value) async {
-              if (value != null && mounted) {
-                if(image != null){
-                  String path = (image.image.toString()).split('"')[1];
-                  await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: path.split('/').last);
-                }else{
-                  await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
-                }
-                await getOfflineFiles();
-              }
-            },
-          ),
+          // CheckPermissionForPhoto(
+          //   name: 'Gallery',
+          //   icon: Icons.receipt_rounded,
+          //   attachmentBase64: (dynamic value) {
+          //     if (value != null && mounted) {}
+          //   },
+          //   imageFile: (dynamic value) async {
+          //     if (value != null && mounted) {
+          //       if(image != null){
+          //         String path = (image.image.toString()).split('"')[1];
+          //         await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: path.split('/').last);
+          //       }else{
+          //         await OfflineImage.storeImage(context: context, image: XFile(value!.path), applicationName: 'Example', preferredLocation: PreferredDirectoryLocation.newFolder, directoryName: 'Test', imageName: 'test${images.length}.jpg' );
+          //       }
+          //       await getOfflineFiles();
+          //     }
+          //   },
+          // ),
           CheckPermissionForPhoto(
             name: 'Camera',
             icon: Icons.camera_alt,
